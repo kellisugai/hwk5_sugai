@@ -24,3 +24,65 @@ library(MASS)  # For mvrnorm function
   # • return_distribution: Logical indicating whether to return the
   #   bootstrap distribution (default TRUE)
 
+# Function for bootstrap bias estimation. 
+bootstrap_bias <- function(x, y, n_bootstrap = 2000, return_distribution = TRUE) 
+  {
+  # Find Bias = E[T'] - T,
+  # Where T = the true correlation, and T' = bootstrapped correlation, 
+  # and E[T'] = the average of all the bootstrapped correlations. 
+  
+  # Find T, the correlation between x and y. 
+  realT <- cor(x,y)
+  
+  # Bootstrap T', a series of correlations, n_bootstrap times. 
+  dist <- numeric(n_bootstrap)   # Prepare an object to hold the estimates. 
+  for(i in 1:n_bootstrap){
+    # Generate random indices. 
+    indices <- sample(1:length(x), size = length(x), replace = TRUE)
+    
+    # Get correlation of x and y at these indices. 
+    dist[i] <- cor(x[indices], y[indices])
+  }
+  
+  # Calculate E[T'], the mean of our bootstrapped correlations. 
+  distMean <- mean(dist)
+  
+  # Calculate the bias, E[T'] - T
+  bias <- distMean - realT 
+  
+  # Use bias-corrected estimator, T - 'Bias' to find corrected bias. 
+  bias_corrected <- realT - bias
+  
+  # Get results ready to return. 
+  finals <- list(
+    original_estimate = realT,
+    bootstrap_mean = distMean,
+    bias = bias,
+    bias_corrected = bias_corrected
+  )
+  
+  # Check if we want to return bootstrap_dist. 
+  if(return_distribution == TRUE){
+    finals$bootstrap_distribution <- dist
+  }
+  
+  return(finals)
+}
+
+# Function implementation. 
+set.seed(456)
+x <- rnorm(30)
+y <- rnorm(30)
+bootstrap_bias(x, y, return_distribution = FALSE)
+# $original_estimate
+# [1] -0.2706364
+
+# $bootstrap_mean
+# [1] -0.2610255
+
+# $bias
+# [1] 0.009610889
+
+# $bias_corrected
+# [1] -0.2802473
+
