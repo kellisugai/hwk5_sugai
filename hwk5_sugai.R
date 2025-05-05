@@ -110,7 +110,7 @@ cat("Sample correlation:", sample_cor, "\n")
 cat("True correlation:", rho, "\n")
 
 # Estimate bias. 
-bootstrap_bias(x,y, return_distribution =  FALSE)
+bootstrapped <- bootstrap_bias(x,y, return_distribution =  TRUE)
 # $original_estimate
 # [1] 0.4548485
 
@@ -123,3 +123,31 @@ bootstrap_bias(x,y, return_distribution =  FALSE)
 # $bias_corrected
 # [1] 0.4127003
 
+# c) Create a histogram of the bootstrap distribution of the correlation
+# coefficient. Mark the original sample correlation and the bias-corrected
+# estimate.
+hist(bootstrapped$bootstrap_distribution,
+     main = "Bootstrapped Correlation Coefficient",
+     xlab = "Bootstrapped Value",
+     ylab = "Frequency"
+     
+     )
+# Make data frame of bootstrapped estimates so we can use ggplot. 
+df <- data.frame(
+  correlation = bootstrapped$bootstrap_distribution
+)
+
+# Visualization. 
+ggplot(data = df, 
+       mapping = aes(x = correlation)) + 
+  geom_histogram() + 
+  geom_vline(xintercept = bootstrapped$original_estimate, color = "red") + 
+  geom_vline(xintercept = bootstrapped$bias_corrected, color = "blue") + 
+  labs(title = "Bootstrapped Correlation Coefficients",  
+       x = "Correlation Coefficient", 
+       y = "Frequency") + 
+  annotate(geom = "text", x = bootstrapped$original_estimate + .2, y = 300, 
+           label = "Original Estimate", color = "red") + 
+  annotate(geom = "text", x = bootstrapped$original_estimate - .3, y = 250,
+           label = "Bias-Corrected Estimate", color = "blue") + 
+  theme_light()
