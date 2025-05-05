@@ -126,12 +126,7 @@ bootstrapped <- bootstrap_bias(x,y, return_distribution =  TRUE)
 # c) Create a histogram of the bootstrap distribution of the correlation
 # coefficient. Mark the original sample correlation and the bias-corrected
 # estimate.
-hist(bootstrapped$bootstrap_distribution,
-     main = "Bootstrapped Correlation Coefficient",
-     xlab = "Bootstrapped Value",
-     ylab = "Frequency"
-     
-     )
+
 # Make data frame of bootstrapped estimates so we can use ggplot. 
 df <- data.frame(
   correlation = bootstrapped$bootstrap_distribution
@@ -151,3 +146,7 @@ ggplot(data = df,
   annotate(geom = "text", x = bootstrapped$original_estimate - .3, y = 250,
            label = "Bias-Corrected Estimate", color = "blue") + 
   theme_light()
+
+# d) Discuss the results. Does the bootstrap effectively estimate the bias in
+# this case? How does the bias-corrected estimate compare to the true
+# correlation?
