@@ -70,7 +70,7 @@ bootstrap_bias <- function(x, y, n_bootstrap = 2000, return_distribution = TRUE)
 }
 
 # Function implementation. 
-set.seed(456)
+set.seed(456) # For reproducibility.
 x <- rnorm(30)
 y <- rnorm(30)
 bootstrap_bias(x, y, return_distribution = FALSE)
@@ -85,4 +85,41 @@ bootstrap_bias(x, y, return_distribution = FALSE)
 
 # $bias_corrected
 # [1] -0.2802473
+
+# b) Generate bivariate data (n = 30) where the true correlation is 0.7, but
+# with an outlier that affects the correlation. Apply your function to
+# estimate the bias.
+
+set.seed(456) # For reproducibility. 
+n <- 30
+rho <- 0.7 # True correlation. 
+
+# Generate correlated data. 
+sigma <- matrix(c(1, rho, rho, 1), ncol = 2)
+xy <- mvrnorm(n-1, mu = c(0, 0), Sigma = sigma) 
+  # Simulates 1 sample from the multivariate normal dist, n = 29.  
+
+# Add outlier. 
+xy <- rbind(xy, c(3, -3)) # Adds outlier to the n = 30 spot. 
+x <- xy[,1] # x = column 1 of simulated bivariate data. 
+y <- xy[,2] # y = column 2 of simulated bivariate data.
+
+# Calculate sample correlation. 
+sample_cor <- cor(x, y)
+cat("Sample correlation:", sample_cor, "\n")
+cat("True correlation:", rho, "\n")
+
+# Estimate bias. 
+bootstrap_bias(x,y, return_distribution =  FALSE)
+# $original_estimate
+# [1] 0.4548485
+
+# $bootstrap_mean
+# [1] 0.4969968
+
+# $bias
+# [1] 0.04214826
+
+# $bias_corrected
+# [1] 0.4127003
 
