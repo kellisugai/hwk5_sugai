@@ -197,7 +197,7 @@ bootstrap_mean <- function(data, n_bootstrap = 2000, ci_type = "percentile") {
   boot_means = numeric(n_bootstrap)
   
   # Get bootstrapped means, n_bootstrap times. 
-  for(i in 1:n_bootstraps){
+  for(i in 1:n_bootstrap){
     sampled <- sample(data, size = length(data), replace = TRUE)
     boot_means[i] <- mean(sampled)
   }
@@ -206,17 +206,17 @@ bootstrap_mean <- function(data, n_bootstrap = 2000, ci_type = "percentile") {
   boot_se <- sd(boot_means)
   
   # Get confidence intervals. 
-  alphaLevel <- 0.05
+  alphaLevel <- as.double(0.05)
   ci <- c(NA,NA) 
   
   # Check the input for CI type. 
   if(ci_type == "percentile"){
-    ci <- quantile(boot_means, probs = c(alpha/2, 1 - alpha/2))
+    ci <- quantile(boot_means, probs = c(alphaLevel/2, 1 - alphaLevel/2))
   }
   
   else if(ci_type == "basic"){
-    lowerCI <- 2*original_mean - quantile(boot_means, probs = 1-alpha/2)
-    upperCI <- 2*original_mean - quantile(boot_means, probs = alpha/2)
+    lowerCI <- 2*original_mean - quantile(boot_means, probs = 1-alphaLevel/2)
+    upperCI <- 2*original_mean - quantile(boot_means, probs = alphaLevel/2)
     ci <- c(lowerCI, upperCI)
   }
   
@@ -240,3 +240,22 @@ bootstrap_mean <- function(data, n_bootstrap = 2000, ci_type = "percentile") {
     boot_means = boot_means
   ))
 }
+
+# b) Apply your function to the returns data using all three CI methods.
+# Report and compare the results.
+
+percentileReturn <- bootstrap_mean(returns, ci_type = "percentile")
+basicReturn <- bootstrap_mean(returns, ci_type = "basic")
+normalReturn <- bootstrap_mean(returns, ci_type = "normal")
+
+# Make comparison table. 
+compTable <- data.frame(
+  Method = c("Percentile", "Basic", "Normal"),
+  Mean = c(percentileReturn$original_mean, basicReturn$original_mean, 
+           normalReturn$original_mean), 
+  Error = c(percentileReturn$boot_se, basicReturn$boot_se, normalReturn$boot_se),
+  Lower = c(percentileReturn$ci[1], basicReturn$ci[1], normalReturn$ci[1]),
+  Upper = c(percentileReturn$ci[2], basicReturn$ci[2], normalReturn$ci[2])
+)
+kable(compTable, 
+      caption = "Comparison of CI Bootstrapping Methods")
