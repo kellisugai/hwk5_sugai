@@ -281,3 +281,11 @@ ggplot(data = bootmeans,
   annotate("text", x = 0.15, y = 163, label = "CI Method:", color = "black") +
   theme_minimal()
 
+# d) Discuss which confidence interval method you believe is most appropriate 
+# for this data and why. 
+
+# For bootstrapping, I believe we should use the percentile method. Both the 
+# basic and normal CI methods relied on using the original sample mean in their 
+# construction. The percentile method only relied on the bootstrapped means.
+# The other two methods both make assumptions about the distribution of the 
+# data, which limits their generalization. 
