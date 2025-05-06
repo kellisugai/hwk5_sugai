@@ -8,6 +8,7 @@
 # Load required packages
 library(ggplot2)
 library(MASS)  # For mvrnorm function
+library(knitr)
 # ----------------------------------------------------------------------------
 # PROBLEM 1: BOOTSTRAP BIAS ESTIMATION
 # ----------------------------------------------------------------------------
@@ -150,3 +151,23 @@ ggplot(data = df,
 # d) Discuss the results. Does the bootstrap effectively estimate the bias in
 # this case? How does the bias-corrected estimate compare to the true
 # correlation?
+
+# Make a table for interpretation. 
+interp <- data.frame(
+  Measure = c("Real Correlation", "Sample Correlation", "Original Estimate", 
+              "Bias-Corrected Estimate"), 
+  Estimates = c(rho, sample_cor, bootstrapped$original_estimate, 
+                bootstrapped$bias_corrected)
+)
+kable(interp, 
+      caption = "Bootstrap Estimates Compared to Actual Correlation")
+
+# In this case, the bootstrapping severely underestimated the actual correlation. 
+# The real correlation = 0.70, but bootstrapping estimated it to be 0.45. 
+# The bias-corrected estimate does even worse, estimating 0.42. 
+# It did not effectively estimate the bias, as it assumed the estimate was 
+# underestimating. The sample correlation was not a good reflection of the true 
+# correlation, so bootstrapping compounded this inaccuracy. 
+
+
+
