@@ -259,3 +259,25 @@ compTable <- data.frame(
 )
 kable(compTable, 
       caption = "Comparison of CI Bootstrapping Methods")
+
+# c) Create a histogram of the bootstrap distribution of the mean. Add
+# vertical lines indicating the three different confidence intervals. 
+
+# Put into a data frame so we can use ggplot. 
+bootmeans <- data.frame(means = percentileReturn$boot_means)
+
+# Visualization. 
+ggplot(data = bootmeans, 
+       mapping = aes(x = means)) + 
+  geom_histogram() + 
+  geom_vline(xintercept = percentileReturn$ci, color = "red") + 
+  geom_vline(xintercept = basicReturn$ci, color = "darkgreen") + 
+  geom_vline(xintercept = normalReturn$ci, color = "blue") + 
+  labs(title = "Bootstrap Distribution of the Mean", 
+       x = "Means", y = "Frequency") + 
+  annotate("text", x = 0.15, y = 155, label = "Percentile", color = "red") + 
+  annotate("text", x = 0.15, y = 149, label = "Basic", color = "darkgreen") +
+  annotate("text", x = 0.15, y = 143, label = "Normal", color = "blue") + 
+  annotate("text", x = 0.15, y = 163, label = "CI Method:", color = "black") +
+  theme_minimal()
+
