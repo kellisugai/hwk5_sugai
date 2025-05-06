@@ -169,5 +169,74 @@ kable(interp,
 # underestimating. The sample correlation was not a good reflection of the true 
 # correlation, so bootstrapping compounded this inaccuracy. 
 
+# ----------------------------------------------------------------------------
+# PROBLEM 2: BOOTSTRAP CONFIDENCE INTERVALS
+# ----------------------------------------------------------------------------
 
+# The file returns.csv contains annual returns data for a portfolio over 50
+# years. I don't have the data, so will generate similar. 
 
+set.seed(42)
+returns <- rnorm(50, mean = 0.08, sd = 0.12)
+returns <- returns + rexp(50, rate = 20) - 0.05
+
+# a) Implement a function bootstrap_mean() that uses the nonparametric
+# bootstrap to estimate the standard error and 95% confidence interval
+# for the mean annual return. Your function should have parameters:
+  # • data: A vector of data values
+  # • n_bootstrap: Number of bootstrap samples (default 2000)
+  # • ci_type: Type of confidence interval to construct (“percentile”,
+  #   “basic”, or “normal”)
+
+# Function for bootstrap confidence intervals. 
+bootstrap_mean <- function(data, n_bootstrap = 2000, ci_type = "percentile") {
+  # Find original mean. 
+  original_mean <- mean(data)
+  
+  # Make object to hold the bootstrapped means. 
+  boot_means = numeric(n_bootstrap)
+  
+  # Get bootstrapped means, n_bootstrap times. 
+  for(i in 1:n_bootstraps){
+    sampled <- sample(data, size = length(data), replace = TRUE)
+    boot_means[i] <- mean(sampled)
+  }
+  
+  # Get bootstrapped standard error. 
+  boot_se <- sd(boot_means)
+  
+  # Get confidence intervals. 
+  alphaLevel <- 0.05
+  ci <- c(NA,NA) 
+  
+  # Check the input for CI type. 
+  if(ci_type == "percentile"){
+    ci <- quantile(boot_means, probs = c(alpha/2, 1 - alpha/2))
+  }
+  
+  else if(ci_type == "basic"){
+    lowerCI <- 2*original_mean - quantile(boot_means, probs = 1-alpha/2)
+    upperCI <- 2*original_mean - quantile(boot_means, probs = alpha/2)
+    ci <- c(lowerCI, upperCI)
+  }
+  
+  else if(ci_type == "normal"){
+    z <- 1.96
+    lowerCI <- original_mean - z*boot_se
+    upperCI <- original_mean + z*boot_se
+    ci <- c(lowerCI, upperCI)
+  }
+  
+  else{
+    return("Error: Please choose one of the following CI types: percentile, 
+             basic, or normal.")
+    stop()
+  }
+  
+  return(list(
+    original_mean = original_mean,
+    boot_se = boot_se,
+    ci = ci,
+    boot_means = boot_means
+  ))
+}
