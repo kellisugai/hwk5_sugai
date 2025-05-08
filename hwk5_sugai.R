@@ -465,4 +465,16 @@ hist(sigDiff$null_distribution,
      col = "orange")
 abline(v = sigDiff$observed_diff, col = "red", lwd = 3)
 
+# d) Compare your bootstrap test results with those of a standard t-test.
+# Discuss any differences and the potential advantages of the bootstrap
+# approach. 
+t.test(treatment, control)
+
+# Both tests showed that there is a significant difference in the means of the 
+# two groups. The standard t-test had a p-value that was slightly larger than
+# the bootstrap method. The bootstrap can be advantageous because it does not 
+# have to make distributional assumptions as it is non-parametric. This is 
+# helpful if the data we are analyzing does not fulfill normality 
+# requirements. It is also helpful if we have a small sample size that could make 
+# traditional inference difficult. 
 
