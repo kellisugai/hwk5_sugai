@@ -336,3 +336,23 @@ rejection_sample_beta <- function(n, a = 3, b = 2) {
     acceptance_rate = acceptance_rate
     ))
 }
+
+# b) Generate 5000 samples using your function and create a histogram of
+# the results. Overlay the true Beta(3,2) density curve for comparison.
+
+# Run algorithm. 
+set.seed(456)
+rejSamp <- rejection_sample_beta(5000)
+
+# Visualize. 
+hist(rejSamp$samples, 
+     probability = TRUE, 
+     xlab = "Samples", 
+     main = "Rejection Samping from Beta(3,2)", 
+     col = "darksalmon")
+curve(dbeta(x, shape1 = 3, shape2 = 2),
+      add = TRUE,
+      col = "red", 
+      lwd = 3)
+
+
