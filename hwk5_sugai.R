@@ -289,3 +289,50 @@ ggplot(data = bootmeans,
 # construction. The percentile method only relied on the bootstrapped means.
 # The other two methods both make assumptions about the distribution of the 
 # data, which limits their generalization. 
+
+# ----------------------------------------------------------------------------
+# PROBLEM 3: REJECTION SAMPLING 
+# ----------------------------------------------------------------------------
+
+# a) Implement a rejection sampling algorithm to generate samples from a
+# Beta(3,2) distribution using a Uniform(0,1) proposal distribution. 
+
+# Function for rejection sampling from Beta(3,2).
+rejection_sample_beta <- function(n, a = 3, b = 2) {
+  samples <- numeric(0) # Prepare variable to hold samples. 
+  totals <- 0 # To hold total number of tries to make acceptance rate later. 
+  
+  # Beta(3,2) is f(x), the target distribution 
+  fx <- function(x){
+    dbeta(x, a, b)
+  }
+  
+  # Uniform(0,1) is g(x), the proposal distribution 
+  gx <- function(x){
+    dunif(x, 0, 1)
+  }
+  
+  # Calculate maximum. 
+  m <- optimize(fx, interval = c(0,1), maximum = TRUE)
+  m <- m$objective 
+  
+  # Iterate until we have accepted n samples. 
+  while(length(samples) < n){
+    x <- runif(1)
+    u <- runif(1)
+    totals <- totals + 1 
+    
+    # Accept x if u <= f(x)/m. 
+    if(u <= fx(x)/m){
+      samples <- c(samples,x)
+    }
+  }
+  
+  # Compute acceptance rate. 
+  acceptance_rate <- n/totals 
+  
+    return(list(
+    samples = samples,
+    acceptance_rate = acceptance_rate
+    ))
+}
