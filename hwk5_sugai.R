@@ -449,3 +449,12 @@ bootstrap_ttest <- function(x, y, n_bootstrap = 2000){
     null_distribution = null_distribution
   ))
 }
+
+# b) Apply your function to test whether there is a significant difference
+# between the treatment and control groups. Use 2000 bootstrap samples.
+set.seed(789)
+sigDiff <- bootstrap_ttest(treatment_group, control_group, n_bootstrap = 2000)
+sigDiff$p_value # 5e-04
+# There is a significant difference between the means of the two groups. 
+
+
