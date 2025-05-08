@@ -366,5 +366,25 @@ paste(round(rejSamp$acceptance_rate*100,3), "%") # "56.6 %"
 # and the beta distribution are not very similar. Choosing a distribution 
 # that is closer to Beta(3,2) would likely have a higher acceptance rate. 
 
+# d) Compare the mean and variance of your generated samples with the
+# theoretical mean and variance of the Beta(3,2) distribution. 
 
+# Calculate the mean and variance of the generated samples. 
+meanSamp <- mean(rejSamp$samples)
+varSamp <- var(rejSamp$samples)
 
+# Calculate the mean and variance of Beta(3,2). 
+# Mean = a / (a + b)
+realMean <- 3/(3+2)
+# Variance = a*b / [(a+b)^2*(a+b+1)] 
+realVar <- (3*2) / (((3+2)^2)*(3+2+1))
+
+# Display results. 
+compData <- matrix(c(meanSamp, varSamp, realMean, realVar), ncol = 2,
+                      nrow = 2, byrow = TRUE)
+rownames(compData) <- c("Generated", "Real")
+colnames(compData) <- c("Mean", "Variance")
+print(round(compData,5))
+
+# The means and variances of our generated sample are nearly equivalent to the 
+# real distribution of Beta(3,2), and are accurate to 3 decimal places. 
