@@ -352,7 +352,19 @@ hist(rejSamp$samples,
      col = "darksalmon")
 curve(dbeta(x, shape1 = 3, shape2 = 2),
       add = TRUE,
-      col = "red", 
+      col = "deeppink1", 
       lwd = 3)
+
+# c) Calculate the acceptance rate of your sampler. Discuss whether this
+# is an efficient approach and what could be done to improve it.
+
+paste(round(rejSamp$acceptance_rate*100,3), "%") # "56.6 %"
+
+# The acceptance rate of my rejection sampler is ~56.6%. This means that it 
+# rejects about 44% of samples and is not efficient. A more efficient 
+# approach would be changing the proposal distribution, as the uniform 
+# and the beta distribution are not very similar. Choosing a distribution 
+# that is closer to Beta(3,2) would likely have a higher acceptance rate. 
+
 
 
