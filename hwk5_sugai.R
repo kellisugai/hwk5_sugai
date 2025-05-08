@@ -40,7 +40,7 @@ bootstrap_bias <- function(x, y, n_bootstrap = 2000, return_distribution = TRUE)
   for(i in 1:n_bootstrap){
     # Generate random indices. 
     indices <- sample(1:length(x), size = length(x), replace = TRUE)
-    
+
     # Get correlation of x and y at these indices. 
     dist[i] <- cor(x[indices], y[indices])
   }
@@ -388,3 +388,64 @@ print(round(compData,5))
 
 # The means and variances of our generated sample are nearly equivalent to the 
 # real distribution of Beta(3,2), and are accurate to 3 decimal places. 
+
+# ----------------------------------------------------------------------------
+# PROBLEM 4: BOOTSTRAP HYPOTHESIS TESTING
+# ----------------------------------------------------------------------------
+# The file treatment.csv contains data from an experiment with two groups:
+# treatment and control.
+
+# I don't have the data file, so will generate similar data. 
+set.seed(123)
+control <- rnorm(40, mean = 10, sd = 2)
+treatment <- rnorm(40, mean = 11.5, sd = 2)
+treatment_data <- data.frame(
+  group = c(rep("control", 40), rep("treatment", 40)),
+  value = c(control, treatment)
+)
+
+# Extract groups
+treatment_group <- treatment_data$value[treatment_data$group == "treatment"]
+control_group <- treatment_data$value[treatment_data$group == "control"]
+
+# a) Implement a function bootstrap_ttest() that performs a bootstrap
+# hypothesis test for the difference in means between two groups. The
+# null hypothesis is that there is no difference between the groups. Your
+# function should:
+    # 1. Take vectors of data from two groups, and number of bootstrap samples
+    # 2. Return the observed difference, p-value, and bootstrap null distribution
+
+# Function for bootstrap hypothesis test
+bootstrap_ttest <- function(x, y, n_bootstrap = 2000){
+  # Test the null hypothesis: E(X) = E(Y)
+  n <- n_bootstrap # Number of bootstrap samples. 
+  observed_diff <- mean(x) - mean(y)
+  
+  # Null distribution holding variable. 
+  null_distribution <- numeric(n)
+  
+  pooledGroup <- c(x,y)
+  
+  # Sample loop.
+  for(i in 1:n){
+    # Regenerate pooled group order randomly. 
+    booted <- sample(pooledGroup, size = length(x) + length(y), 
+                     replace = TRUE) 
+    
+    # Split booted into x and y groups. 
+    newX <- booted[1:length(x)]
+    newY <- booted[(length(x) + 1):length(booted)]
+    
+    # Find the difference in the resampled means.
+    null_distribution[i] <- mean(newX) - mean(newY)
+  }
+  
+  # Compute the p-value, comparing our null distribution to the real difference. 
+  p_value <- mean(abs(null_distribution) >= abs(observed_diff))
+  
+  return(list(
+    observed_diff = observed_diff,
+    p_value = p_value,
+    null_distribution = null_distribution
+  ))
+}
