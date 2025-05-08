@@ -457,4 +457,12 @@ sigDiff <- bootstrap_ttest(treatment_group, control_group, n_bootstrap = 2000)
 sigDiff$p_value # 5e-04
 # There is a significant difference between the means of the two groups. 
 
+# c) Create a visualization showing the bootstrap null distribution, with
+# the observed difference marked. 
+hist(sigDiff$null_distribution, 
+     xlab = "Null Distribution", 
+     main = "Bootstrapped Distribution Under the Null Hypothesis",
+     col = "orange")
+abline(v = sigDiff$observed_diff, col = "red", lwd = 3)
+
 
